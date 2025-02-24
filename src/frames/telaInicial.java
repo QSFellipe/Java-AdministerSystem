@@ -278,19 +278,23 @@ public class telaInicial extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     public boolean AutenticacaoUser(String email, String senha) {
-
+        // Obtém a lista completa de usuários cadastrados
         List<Usuario> listaCompleta = ListaUsuario.listar();
-
+        
+        // Verifica se a lista de usuários está vazia
         if (listaCompleta.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Nenhum usuário cadastrado", "Erro", JOptionPane.ERROR_MESSAGE);
             LimparCampos();
             return false;
         }
-
+        
+        // Percorre a lista de usuários para verificar se o email e a senha correspondem
         for (Usuario u : listaCompleta) {
             if (email.equals(u.getEmail()) && senha.equals(u.getSenha())) {
+                // Se o login for bem-sucedido, exibe uma mensagem de boas-vindas
                 JOptionPane.showMessageDialog(this, "Login bem-sucedido!\nBem-Vindo " + u.getNomeUsuario(), "ADM System", JOptionPane.INFORMATION_MESSAGE);
                 
+                // Armazena os dados do usuário logado na sessão
                 SessaoUsuario.setIdUsuarioLogado(u.getId());
                 SessaoUsuario.setNomeUsuario(u.getNomeUsuario());
                 SessaoUsuario.setCargo(u.getCargo());
@@ -298,18 +302,21 @@ public class telaInicial extends javax.swing.JFrame {
                 return true;
             }
         }
+        // Se o email ou a senha estiverem incorretos, exibe uma mensagem de erro
         JOptionPane.showMessageDialog(this, "Usuário ou senha incorretos!", "Erro", JOptionPane.ERROR_MESSAGE);
         LimparCampos();
         return false;
     }
 
     public void validarCampos() {
+        // Verifica se os campos de email e senha estão vazios
         if (txEmail.getText().isEmpty() || txSenha.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Digite Email e Senha para acessar o sistema!");
         }
     }
 
     public void LimparCampos() {
+        // Limpa os campos de email e senha
         txEmail.setText("");
         txSenha.setText("");
     }

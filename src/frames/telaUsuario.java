@@ -241,14 +241,15 @@ public class telaUsuario extends javax.swing.JFrame {
 
     private void btnPesquisar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisar1ActionPerformed
         limparCampos();
-
+        
+        //Faz a validação do ID e retorna se o ID é válido ou não
         if (!validaID()) {
             return;
         }
 
         try {
             int id = Integer.parseInt(txId.getText().trim());
-
+            //Chama o método getDados usando o id solicitado como parâmetro
             getDados(id);
 
         } catch (NumberFormatException e) {
@@ -320,22 +321,28 @@ public class telaUsuario extends javax.swing.JFrame {
 
     
   public void listarTabela() {
+      // Obtém o modelo da tabela e limpa todas as linhas existentes
         DefaultTableModel model = (DefaultTableModel) tableUsuarios.getModel();
         model.setRowCount(0);
-
+        
+        //Obtem os dados cadastrados com base no método listar()
         for (Usuario u : ListaUsuario.listar()) {
             model.addRow(new Object[]{u.getId(), u.getNomeUsuario(), u.getEmail(), u.getCargo(), u.getSenha()});
         }
     }
 
-    public Usuario getId(Integer id) {
+    public Usuario getId(Integer id) { 
+        // Obtém a lista de usuários
         List<Usuario> usuario = ListaUsuario.listar();
 
         System.out.println("Lista de usuários: " + usuario);
 
         try {
+            // Verifica se a lista de usuários não é nula e não está vazia
             if (usuario != null && !usuario.isEmpty()) {
+                // Percorre a lista para encontrar o usuário com o ID correspondente
                 for (Usuario user : usuario) {
+                    // Usa equals para comparação de objetos
                     if (user.getId() == id) {
                         return user;
                     }
@@ -349,25 +356,29 @@ public class telaUsuario extends javax.swing.JFrame {
     }
 
     public void atualizar() {
+        //Faz a validação do ID e retorna se o ID é válido ou não
         if (!validaID()) {
             return;
         }
 
         Integer id = Integer.valueOf(txId.getText().trim());
         Usuario usuario = getId(id);
-
+        
+         // Verifica se o usuário foi encontrado
         if (usuario == null) {
             JOptionPane.showMessageDialog(null, "Usuário(a) não encontrado(a)!", "Erro", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         try {
+            // Atualiza os dados do usuário com os valores dos campos de texto      
             usuario.setEmail(txEmail.getText());
             usuario.setNomeUsuario(txNome.getText());
             usuario.setCargo(cbCargo.getSelectedItem().toString());
 
             JOptionPane.showMessageDialog(null, "Dados do usuário atualizados!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
 
+            // Atualiza a lista de usuários e limpa os campos
             ListaUsuario.listar();
             limparCampos();
 
@@ -377,16 +388,19 @@ public class telaUsuario extends javax.swing.JFrame {
     }
 
     public void limparCampos() {
+        // Limpa os campos de texto e redefine o combobox para o valor padrão
         txNome.setText("");
         txEmail.setText("");
         cbCargo.setSelectedItem("Selecione:");
     }
 
     public void getDados(Integer id) {
+        // Obtém o usuário pelo ID
         Usuario usuario = getId(id);
 
         if (usuario != null) {
             try {
+                // Preenche os campos de texto com os dados do usuário
                 txNome.setText(usuario.getNomeUsuario());
                 txEmail.setText(usuario.getEmail());
                 cbCargo.setSelectedItem(usuario.getCargo());
@@ -395,43 +409,54 @@ public class telaUsuario extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "Erro ao preencher os campos!" + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
             }
         } else {
+            // Exibe uma mensagem de erro se o usuário não for encontrado
             JOptionPane.showMessageDialog(null, "Nenhum usuário com ID fornecido!", "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     public boolean validaID() {
+        // Obtém o texto do campo ID e remove espaços em branco
         String idText = txId.getText().trim();
 
+        // Verifica se o campo está vazio
         if (idText.isEmpty()) {
             JOptionPane.showMessageDialog(null, "O campo ID não pode estar vazio.", "Erro", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-
+        
+        // Verifica se o campo contém apenas números
         if (!idText.matches("\\d+")) {
             JOptionPane.showMessageDialog(null, "O campo ID deve conter apenas números.", "Erro", JOptionPane.ERROR_MESSAGE);
+
             return false;
         }
-
+        // Retorna true se o ID for válido
         return true;
     }
 
     public void excluirRegistro() {
+        // Obtém a linha selecionada na tabela
         int linhaSelecionada = tableUsuarios.getSelectedRow();
 
-        if (linhaSelecionada != -1) {
-
+        if (linhaSelecionada != -1) {// Verifica se uma linha foi selecionada
+            
+            // Solicita confirmação do usuário para excluir o registro
             int resposta = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja excluir esta transação?", "Confirmação", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE
             );
             
             if (resposta == JOptionPane.YES_OPTION) {
+                // Obtém o ID do usuário da linha selecionada
                 int idUser = (int) tableUsuarios.getValueAt(linhaSelecionada, 0);
-
+                
+                // Remove o usuário da lista
                 List<Usuario> usuario = ListaUsuario.listar();
                 usuario.removeIf(transacao -> transacao.getId() == idUser);
-
+                
+                // Remove a linha da tabela
                 DefaultTableModel model = (DefaultTableModel) tableUsuarios.getModel();
                 model.removeRow(linhaSelecionada);
-
+                
+                // Notifica a tabela que os dados foram alterados
                 model.fireTableDataChanged();
 
                 JOptionPane.showMessageDialog(null, "Transação removida com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);

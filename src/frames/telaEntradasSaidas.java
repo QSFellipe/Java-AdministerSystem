@@ -318,52 +318,61 @@ public class telaEntradasSaidas extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     public boolean cadastroEntradaseSaidas() {
+        // Verifica se os campos obrigatórios estão preenchidos
         if (!validarCampos()) {
             return false;
         }
-
+        
+        // Cria um formato de data para validar e converter as datas inseridas
         SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
 
         formato.setLenient(false);
-
+        
+        // Cria um novo objeto para armazenar os dados da transação
         CadastroTransacoes cadastro = new CadastroTransacoes();
         cadastro.setId(gerarNovoId());
         int idUsuario = capturarIdUser();
         cadastro.setIdUsuario(idUsuario);
 
         try {
+            // Preenche os dados da transação com os valores dos campos da interface
             cadastro.setCategoria(CbCategoria1.getSelectedItem().toString());
             cadastro.setDescricao(txDescricao.getText());
             cadastro.setFormaPagamento(CbFormaPagamento.getSelectedItem().toString());
-
+            
+            // Verifica e converte a data de entrada, se preenchida
             if (!txDataEntrada.getText().trim().isEmpty()) {
                 Date dataEntrada = formato.parse(txDataEntrada.getText().trim());
                 cadastro.setDataEntrada(dataEntrada);
             } else {
                 cadastro.setDataEntrada(null);
             }
-
+            
+            // Verifica e converte a data de saída, se preenchida
             if (!txDataSaida.getText().trim().isEmpty()) {
                 Date dataSaida = formato.parse(txDataSaida.getText().trim());
                 cadastro.setDataSaida(dataSaida);
             } else {
                 cadastro.setDataSaida(null);
             }
-
+            
+            // Verifica e converte o valor de entrada, se preenchido
             if (!txValorEntrada.getText().trim().isEmpty()) {
                 double valorEntrada = Double.parseDouble(txValorEntrada.getText().trim());
                 cadastro.setValorEntrada(valorEntrada);
             } else {
                 cadastro.setValorEntrada(null);
             }
-
+            
+            // Verifica e converte o valor de saída, se preenchido
             if (!txValorSaida.getText().trim().isEmpty()) {
                 double valorSaida = Double.parseDouble(txValorSaida.getText().trim());
                 cadastro.setValorSaida(valorSaida);
             } else {
                 cadastro.setValorSaida(null);
             }
-
+            
+            // Exibe a transação no console para depuração
             System.out.println("Adicionando transação: " + cadastro);
             ListaTransacoes.adicionar(cadastro);
             System.out.println("Lista após adicionar: " + ListaTransacoes.listar());
@@ -386,16 +395,19 @@ public class telaEntradasSaidas extends javax.swing.JFrame {
     }
 
     public boolean validarCampos() {
+        // Valida se a categoria foi selecionada
         if (CbCategoria1.getSelectedItem().equals("Selecione:")) {
             JOptionPane.showMessageDialog(null, "O campo 'Categoria' é obrigatório.", "Erro", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-
+        
+        // Valida se a forma de pagamento foi selecionada
         if (CbFormaPagamento.getSelectedItem().equals("Selecione:")) {
             JOptionPane.showMessageDialog(null, "O campo 'Forma de Pagamento' é obrigatório.", "Erro", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-
+        
+        // Valida se a descrição foi preenchida
         if (txDescricao.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(null, "O campo 'Descrição' é obrigatório.", "Erro", JOptionPane.ERROR_MESSAGE);
             return false;
@@ -405,6 +417,7 @@ public class telaEntradasSaidas extends javax.swing.JFrame {
     }
 
     public void limparCampos() {
+        // Limpa todos os campos da interface
         txDataEntrada.setText("");
         txDataSaida.setText("");
         txDescricao.setText("");
@@ -415,12 +428,15 @@ public class telaEntradasSaidas extends javax.swing.JFrame {
     }
 
     private int gerarNovoId() {
+        // Obtém a lista de transações cadastradas
         List<CadastroTransacoes> transacoes = ListaTransacoes.listar();
-
+        
+        // Se a lista estiver vazia, retorna o ID 1
         if (transacoes.isEmpty()) {
             return 1;
         }
-
+        
+        // Encontra o maior ID na lista e gera um novo ID incrementando o maior ID encontrado
         int maiorId = transacoes.stream()
                 .mapToInt(CadastroTransacoes::getId)
                 .max()
@@ -430,6 +446,7 @@ public class telaEntradasSaidas extends javax.swing.JFrame {
 }
 
 private int capturarIdUser() {
+        // Retorna o ID do usuário logado na sessão
         return SessaoUsuario.getIdUsuarioLogado();
     }
 }

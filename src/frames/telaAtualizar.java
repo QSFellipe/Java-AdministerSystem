@@ -371,40 +371,48 @@ public class telaAtualizar extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     public void atualizar() {
-        CadastroTransacoes transacao = getId(WIDTH);
-
+        // Obtém a transação com base no ID fornecido
+        CadastroTransacoes transacao = getId(Integer.parseInt(txID.getText()));
+        
+        // Valida o ID antes de prosseguir
         if (!validaID()) {
             return;
         }
-
+        
+        // Verifica se a transação foi encontrada
         if (transacao == null) {
             JOptionPane.showMessageDialog(null, "Transação não encontrada!", "Erro", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
+        
+        // Configura o formato de data para validação e conversão
         SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
         formato.setLenient(false);
 
         try {
-
+            
+            // Atualiza os dados da transação com os valores dos campos da interface
             transacao.setCategoria(cbCategoria.getSelectedItem().toString());
             transacao.setDescricao(txDescricao.getText());
             transacao.setFormaPagamento(cbFormaPagamento.getSelectedItem().toString());
-
+            
+            // Verifica e atualiza a data de entrada, se preenchida
             if (!txDataEntrada.getText().trim().isEmpty()) {
                 Date dataEntrada = formato.parse(txDataEntrada.getText().trim());
                 transacao.setDataEntrada(dataEntrada);
             } else {
                 transacao.setDataEntrada(null);
             }
-
+            
+            // Verifica e atualiza a data de saída, se preenchida
             if (!txDataSaida.getText().trim().isEmpty()) {
                 Date dataSaida = formato.parse(txDataSaida.getText().trim());
                 transacao.setDataSaida(dataSaida);
             } else {
                 transacao.setDataSaida(null);
             }
-
+            
+            // Verifica e atualiza o valor de entrada, se preenchido
             if (!txValorEntrada.getText().trim().isEmpty()) {
                 double valorEntrada = Double.parseDouble(txValorEntrada.getText().trim());
                 transacao.setValorEntrada(valorEntrada);
@@ -412,6 +420,7 @@ public class telaAtualizar extends javax.swing.JFrame {
                 transacao.setValorEntrada(null);
             }
 
+            // Verifica e atualiza o valor de saída, se preenchido
             if (!txValorSaida.getText().trim().isEmpty()) {
                 double valorSaida = Double.parseDouble(txValorSaida.getText().trim());
                 transacao.setValorSaida(valorSaida);
@@ -420,7 +429,8 @@ public class telaAtualizar extends javax.swing.JFrame {
             }
 
             JOptionPane.showMessageDialog(null, "Transação atualizada com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
-
+            
+            // Atualiza a lista de transações e limpa os campos
             ListaTransacoes.listar();
             limparCampos();
 
@@ -434,40 +444,48 @@ public class telaAtualizar extends javax.swing.JFrame {
     }
 
     public void getDados(Integer id) {
+        // Obtém a transação com base no ID fornecido
         CadastroTransacoes cadastroTransacoes = getId(id);
-
+        
+        // Configura o formato de data para exibição
         SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-
+        
+        // Verifica se a transação foi encontrada
         if (cadastroTransacoes != null) {
             try {
-
+                // Preenche os campos da interface com os dados da transação
                 cbCategoria.setSelectedItem(cadastroTransacoes.getCategoria());
                 cbFormaPagamento.setSelectedItem(cadastroTransacoes.getFormaPagamento());
-
+                
+                // Preenche a data de entrada, se existir
                 if (cadastroTransacoes.getDataEntrada() != null) {
                     txDataEntrada.setText(formato.format(cadastroTransacoes.getDataEntrada()));
                 } else {
                     txDataEntrada.setText("");
                 }
-
+                
+                // Preenche a data de saída, se existir
                 if (cadastroTransacoes.getDataSaida() != null) {
                     txDataSaida.setText(formato.format(cadastroTransacoes.getDataSaida()));
                 } else {
                     txDataSaida.setText("");
                 }
-
+                
+                // Preenche o valor de entrada, se existir
                 if (cadastroTransacoes.getValorEntrada() != null) {
                     txValorEntrada.setText(cadastroTransacoes.getValorEntrada().toString());
                 } else {
                     txValorEntrada.setText("");
                 }
-
+                
+                // Preenche o valor de saída, se existir
                 if (cadastroTransacoes.getValorSaida() != null) {
                     txValorSaida.setText(cadastroTransacoes.getValorSaida().toString());
                 } else {
                     txValorSaida.setText("");
                 }
-
+                
+                // Preenche a descrição
                 txDescricao.setText(cadastroTransacoes.getDescricao());
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Erro ao preencher os campos!" + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
@@ -478,12 +496,15 @@ public class telaAtualizar extends javax.swing.JFrame {
     }
 
     public CadastroTransacoes getId(Integer id) {
+        // Obtém a lista de transações cadastradas
         List<CadastroTransacoes> transacoes = ListaTransacoes.listar();
 
         System.out.println("Lista de transações: " + transacoes);
 
         try {
+             // Verifica se a lista de transações não é nula e não está vazia
             if (transacoes != null && !transacoes.isEmpty()) {
+                // Percorre a lista para encontrar a transação com o ID correspondente
                 for (CadastroTransacoes cadastro : transacoes) {
                     if (cadastro.getId().equals(id)) {
                         return cadastro;
@@ -498,6 +519,7 @@ public class telaAtualizar extends javax.swing.JFrame {
     }
 
     public void limparCampos() {
+        // Limpa todos os campos da interface
         cbCategoria.setSelectedItem("Selecione:");
         cbFormaPagamento.setSelectedItem("Selecione:");
         txDataEntrada.setText("");
@@ -508,13 +530,16 @@ public class telaAtualizar extends javax.swing.JFrame {
     }
 
     public boolean validaID() {
+        // Obtém o texto do campo ID e remove espaços em branco
         String idText = txID.getText().trim();
-
+        
+        // Verifica se o campo ID está vazio
         if (idText.isEmpty()) {
             JOptionPane.showMessageDialog(null, "O campo ID não pode estar vazio.", "Erro", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-
+        
+        // Verifica se o campo ID contém apenas números
         if (!idText.matches("\\d+")) {
             JOptionPane.showMessageDialog(null, "O campo ID deve conter apenas números.", "Erro", JOptionPane.ERROR_MESSAGE);
             return false;
